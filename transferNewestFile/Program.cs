@@ -88,13 +88,10 @@ namespace transferNewestFile
             string file_name = _list_no_transfered_bmp[0];
             // do act on file
             //删除目标文件夹中同类的文件
-            string des_file = Get_des_folder_existed_file(file_name, _des_file_path);
-            if (des_file != null)
+            List<string> des_file_list = Get_des_folder_existed_file(file_name, _des_file_path);
+            if (des_file_list != null)
             {
-                string full_path = _des_file_path + "\\" + des_file;
-                Console.WriteLine("删除文件：" + full_path);
-                Debug.WriteLine("删除文件：" + full_path);
-                File.Delete(full_path);
+                Delete_dest_folder_temp_files(des_file_list, _des_file_path);
             }
             string des_file_name = file_name + ".png";
             Debug.WriteLine("src_file:" + file_name);
@@ -109,6 +106,8 @@ namespace transferNewestFile
 
             return Act_on_file(list_next_loop, list_refreshed_transfered_names, _src_file_path, _des_file_path);
         }
+
+
         static void ImageFormatter(string sourcePath, string destationPath)
         {
             try
@@ -127,7 +126,7 @@ namespace transferNewestFile
             }
 
         }
-        static string Get_des_folder_existed_file(string _file_name, string _file_path)
+        static List<string> Get_des_folder_existed_file(string _file_name, string _file_path)
         {
             DirectoryInfo TheFolder = new DirectoryInfo(_file_path);
             FileInfo[] all_files = TheFolder.GetFiles();
@@ -143,7 +142,7 @@ namespace transferNewestFile
                 });
             if (list_file_with_same_group.Count > 0)
             {
-                return list_file_with_same_group[0];
+                return list_file_with_same_group;
             }
             else
             {
@@ -248,18 +247,28 @@ namespace transferNewestFile
                  return string.Compare(_second, _first);
              });
 
-            return Delete_files(list_bmps, _file_path)[0];
+            return Delete_src_folder_temp_files(list_bmps, _file_path)[0];
         }
 
+        //删除目标文件夹中上次生成的同类图片
+        private static void Delete_dest_folder_temp_files(List<string> des_file_list, string _des_file_path)
+        {
+            if (des_file_list.Count > 0)
+            {
+                string file_name = des_file_list[0];
+                File.Delete(_des_file_path + "\\" + file_name);
+                Delete_src_folder_temp_files(des_file_list.GetRange(0, des_file_list.Count - 1), _des_file_path);
+            }
+        }
         //删除存储过多的文件，返回经过排序的文件列表
-        static List<string> Delete_files(List<string> _list_bmps, string _file_path)
+        static List<string> Delete_src_folder_temp_files(List<string> _list_bmps, string _file_path)
         {
             //对数量过多进行处理
             if (_list_bmps.Count > MAX_FILE_COUNT)
             {
                 string file_name = _list_bmps[_list_bmps.Count - 1];
                 File.Delete(_file_path + "\\" + file_name);
-                return Delete_files(_list_bmps.GetRange(0, _list_bmps.Count - 1), _file_path);
+                return Delete_src_folder_temp_files(_list_bmps.GetRange(0, _list_bmps.Count - 1), _file_path);
             }
             else
             {
