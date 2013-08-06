@@ -111,9 +111,9 @@ namespace transferNewestFile
         }
         static void ImageFormatter(string sourcePath, string destationPath)
         {
-            Bitmap bitmap = new Bitmap(sourcePath);
             try
             {
+                Bitmap bitmap = new Bitmap(sourcePath);
                 bitmap.Save(destationPath, ImageFormat.Png);
                 bitmap.Dispose();
 
@@ -166,7 +166,12 @@ namespace transferNewestFile
 
         private static string Get_group_id(string file_name)
         {
-            return file_name.Substring(0, file_name.IndexOf("-"));
+            if (file_name.IndexOf("-") >= 0)
+            {
+                return file_name.Substring(0, file_name.IndexOf("-"));
+            }
+            else
+                return string.Empty;
         }
 
         /// <summary>
