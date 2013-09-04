@@ -42,8 +42,16 @@ namespace transferNewestFile
             timer.Enabled = true;
 
             //start_loop();
-            //start_loop();
-            Console.ReadLine();
+        //start_loop();
+
+
+        READ_INPUT: string input = Console.ReadLine();
+        if (input == "exit") return;
+        else
+        {
+            Console.WriteLine("you input wrong code...");
+            goto READ_INPUT;
+        }
         }
         static void start_loop()
         {
@@ -331,7 +339,7 @@ namespace transferNewestFile
         }
         static void importData()
         {
-            string strReadFilePath1 = @"./config.txt";
+            string strReadFilePath1 = @"./config/config_bmp2png.txt";
             StreamReader srReadFile1 = new StreamReader(strReadFilePath1);
             string strConfig = srReadFile1.ReadToEnd();
             srReadFile1.Close();
